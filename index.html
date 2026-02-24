@@ -23,7 +23,7 @@
                               radial-gradient(circle at 80% 80%, rgba(39,174,96,0.08) 0%, transparent 50%);
             margin: 0; padding: 0; min-height: 100vh;
         }
-        /* HEADER - Тепер не закріплений */
+        /* HEADER - НЕ ЗАКРІПЛЕНИЙ */
         .header {
             background: linear-gradient(135deg, #1a1a2e 0%, #2c1810 100%);
             padding: 25px 20px 20px; text-align: center;
@@ -58,6 +58,7 @@
         .mini-weight { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: var(--dark); }
         .mini-badge { background: var(--green); color: white; border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 700; }
         .full-content { padding: 18px; }
+        label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 10px; }
         input { width: 100%; height: 44px; border-radius: 10px; border: 1.5px solid var(--border); padding: 0 12px; font-size: 15px; background: var(--gray); margin-top: 5px; }
         .balance-box { padding: 12px; border-radius: 12px; text-align: center; margin: 14px 0; font-family: 'Oswald', sans-serif; font-size: 18px; border: 2px dashed; }
         .balance-err { background: #fff5f5; border-color: #ffcccc; color: var(--red); }
@@ -68,7 +69,6 @@
         .card-actions { display: flex; gap: 10px; margin-top: 15px; }
         .btn-send { flex: 1; background: var(--dark); color: white; border: none; padding: 15px; border-radius: 12px; font-family: 'Oswald', sans-serif; font-weight: 600; cursor: pointer; }
         .btn-delete-full, .mini-delete { background: #fff0f0; border: 1.5px solid #ffcccc; color: var(--red); border-radius: 12px; width: 50px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
-        /* MODALS */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-overlay.open { display: flex; }
         .modal { background: white; border-radius: 20px; padding: 24px; width: 90%; max-width: 340px; text-align: center; }
@@ -95,8 +95,8 @@
         <input type="password" id="modalPassInput" maxlength="10" placeholder="••••">
         <div id="modalErr" style="color:red; font-size:12px; margin:10px 0;"></div>
         <div style="display:flex; gap:10px;">
-            <button onclick="closeModal()" style="flex:1; padding:10px;">СКАСУВАТИ</button>
-            <button onclick="confirmDelete()" style="flex:1; padding:10px; background:var(--red); color:white; border:none;">ВИДАЛИТИ</button>
+            <button onclick="closeModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">СКАСУВАТИ</button>
+            <button onclick="confirmDelete()" style="flex:1; padding:10px; border-radius:10px; background:var(--red); color:white; border:none;">ВИДАЛИТИ</button>
         </div>
     </div>
 </div>
@@ -106,26 +106,30 @@
         <h3>🗑 ВИДАЛИТИ?</h3>
         <p>Цю партію буде видалено назавжди</p>
         <div style="display:flex; gap:10px;">
-            <button onclick="closeConfirmModal()" style="flex:1; padding:10px;">СКАСУВАТИ</button>
-            <button onclick="doQuickDelete()" style="flex:1; padding:10px; background:var(--red); color:white; border:none;">ВИДАЛИТИ</button>
+            <button onclick="closeConfirmModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">СКАСУВАТИ</button>
+            <button onclick="doQuickDelete()" style="flex:1; padding:10px; border-radius:10px; background:var(--red); color:white; border:none;">ВИДАЛИТИ</button>
         </div>
     </div>
 </div>
 
 <script>
+// ==========================================
+// НАЛАШТУВАННЯ (ВСТАВТЕ ВАШІ ДАНІ ТУТ)
+// ==========================================
 const firebaseConfig = {
-    apiKey: "AIzaSyC8iJyz9URNWxqHoWl6fTAu89caaZK9l-U",
-    authDomain: "meatapp-1.firebaseapp.com",
-    databaseURL: "https://meatapp-1-default-rtdb.firebaseio.com",
-    projectId: "meatapp-1",
-    storageBucket: "meatapp-1.firebasestorage.app",
-    messagingSenderId: "909786568400",
-    appId: "1:909786568400:web:2a89c6b6eb5d17ff2930d5"
-};
-const TG_TOKEN = "7906609865:AAGxiiMSSnJcShk5SoxE7eVItyqDcWvyE38";
+        apiKey: "AIzaSyC8iJyz9URNWxqHoWl6fTAu89caaZK9l-U",
+        authDomain: "meatapp-1.firebaseapp.com",
+        databaseURL: "https://meatapp-1-default-rtdb.firebaseio.com",
+        projectId: "meatapp-1",
+        storageBucket: "meatapp-1.firebasestorage.app",
+        messagingSenderId: "909786568400",
+        appId: "1:909786568400:web:2a89c6b6eb5d17ff2930d5"
+    };
+
+    const TG_TOKEN = "7906609865:AAGxiiMSSnJcShk5SoxE7eVItyqDcWvyE38";
 const TG_CHAT_ID = "-1002336484919";
 const TG_THREAD_ID = "4476";
-const _AP = atob("MzE5Ng=="); // 3196
+const _AP = atob("MzE5Ng=="); // Пароль: 3196
 
 let cachedData = {};
 let pendingDeleteId = null;
@@ -144,7 +148,7 @@ function showToast(msg) {
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ПЕРЕВІРКА ТА ОЧИЩЕННЯ СТАРИХ ЗАПИСІВ (7 днів)
+// Функція очищення архіву (7 днів)
 function cleanupOldBatches(data) {
     const now = Date.now();
     const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
@@ -156,7 +160,7 @@ function cleanupOldBatches(data) {
 }
 
 if (firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
-    setStatus("Помилка: Налаштуйте Firebase", false);
+    setStatus("⚠️ Налаштуйте Firebase", false);
 } else {
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -165,14 +169,15 @@ if (firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
         cachedData = snap.val() || {};
         cleanupOldBatches(cachedData);
         renderCards(cachedData);
-    });
+        setStatus("З'єднано з хмарою ✅", true);
+    }, err => setStatus("Помилка БД: " + err.message, false));
 
     window.addNewBatch = () => {
         const id = Date.now();
         db.ref('meat_batches/' + id).set({
             id, date: new Date().toLocaleDateString('uk-UA'),
             name: "", weight_in: 0, pf: 0, mince: 0, waste: 0, sent: false
-        });
+        }).then(() => showToast("Нова партія створена"));
     };
 
     window.updateField = (id, field, value) => {
@@ -183,99 +188,115 @@ if (firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
 
     window.addWeight = (id, field) => {
         const input = document.getElementById(`in-${field}-${id}`);
+        if (!input) return;
         let valStr = input.value.replace(',', '.');
         const val = parseFloat(valStr);
-        if (!val || val <= 0) return;
+        if (!val || val <= 0) { input.focus(); return; }
 
-        // Використовуємо silent update, щоб не перемальовувати весь список миттєво
         db.ref('meat_batches/' + id + '/' + field).transaction(cur => {
             return Math.round(((cur || 0) + val) * 1000) / 1000;
         });
         input.value = '';
+        input.focus();
     };
 
     window.sendToTG = async (id, btn) => {
         const item = cachedData[id];
+        if (!item) return;
         btn.disabled = true;
-        const bal = Math.round((item.weight_in - (item.pf + item.mince + item.waste)) * 1000) / 1000;
-        const text = `📦 АКТ: ${item.name || '—'}\n📥 Прихід: ${item.weight_in}кг\n🔪 ПФ: ${item.pf}кг\n🍔 Фарш: ${item.mince}кг\n🗑 Відхід: ${item.waste}кг\n✅ Баланс: ${bal}кг`;
+        btn.textContent = "Надсилання...";
         
-        const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TG_CHAT_ID, text, message_thread_id: TG_THREAD_ID })
-        });
-        if (res.ok) {
-            db.ref('meat_batches/' + id).update({ sent: true });
-            showToast("Відправлено!");
+        const bal = Math.round((item.weight_in - (item.pf + item.mince + item.waste)) * 1000) / 1000;
+        const text = `📦 АКТ РОЗБОРУ: ${item.name || '—'}\n📥 Прихід: ${item.weight_in} кг\n🔪 ПФ: ${item.pf} кг\n🍔 Фарш: ${item.mince} кг\n🗑 Відхід: ${item.waste} кг\n✅ Баланс: ${bal} кг`;
+        
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: TG_CHAT_ID, text, message_thread_id: TG_THREAD_ID })
+            });
+            if (res.ok) {
+                db.ref('meat_batches/' + id).update({ sent: true });
+                showToast("Відправлено в TG ✅");
+            } else { throw new Error(); }
+        } catch (e) {
+            showToast("Помилка відправки");
+            btn.disabled = false;
+            btn.textContent = "ВІДПРАВИТИ";
         }
     };
 }
 
 function renderCards(data) {
-    // Якщо модалка відкрита, не перемальовуємо (запобігає морганню та закриттю клавіатури)
     if (document.querySelector('.modal-overlay.open')) return;
-
     const list = document.getElementById('cards-list');
     const items = Object.values(data).sort((a, b) => b.id - a.id);
     
-    // Щоб уникнути моргання, оновлюємо тільки якщо кількість карток або статус змішилися
-    const newContent = items.map(item => {
+    if (items.length === 0) {
+        list.innerHTML = `<div style="color:white; text-align:center; padding:50px; grid-column:1/-1;">Натисніть "+ НОВА ПАРТІЯ"</div>`;
+        return;
+    }
+
+    let html = '';
+    items.forEach(item => {
         const balance = Math.round((item.weight_in - (item.pf + item.mince + item.waste)) * 1000) / 1000;
         const isOk = item.weight_in > 0 && balance === 0;
-        return `
-            <div class="card ${item.sent ? 'is-sent' : (isOk ? 'is-ok' : '')}">
-                ${item.sent ? `
-                    <div class="mini-content">
-                        <div class="mini-indicator"></div>
-                        <div class="mini-info">
-                            <div style="font-size:11px; color:#888">${item.name || '...'}</div>
-                            <div class="mini-weight">${item.weight_in} кг</div>
-                        </div>
-                        <div class="mini-badge">ВІДПРАВЛЕНО</div>
-                        <button class="mini-delete" onclick="askDeletePassword('${item.id}')">🗑</button>
+        
+        if (item.sent) {
+            html += `
+            <div class="card is-sent">
+                <div class="mini-content" style="display:flex">
+                    <div class="mini-indicator"></div>
+                    <div class="mini-info">
+                        <div style="font-size:11px; color:#888">${item.name || 'Без назви'} · ${item.date}</div>
+                        <div class="mini-weight">${item.weight_in} кг</div>
                     </div>
-                ` : `
-                    <div class="full-content">
-                        <div style="font-size:11px; color:#888">📅 ${item.date}</div>
-                        <input type="text" value="${item.name}" placeholder="Назва" onchange="updateField('${item.id}','name',this.value)">
-                        <input type="number" value="${item.weight_in}" placeholder="Прихід кг" onchange="updateField('${item.id}','weight_in',this.value)">
-                        <div class="balance-box ${isOk ? 'balance-ok' : 'balance-err'}">ЗАЛИШОК: ${balance.toFixed(3)} кг</div>
-                        ${renderRow(item.id, '🔪 ПФ', 'pf', item.pf)}
-                        ${renderRow(item.id, '🍔 Фарш', 'mince', item.mince)}
-                        ${renderRow(item.id, '🗑 Відхід', 'waste', item.waste)}
-                        <div class="card-actions">
-                            <button class="btn-send" onclick="sendToTG('${item.id}', this)">ВІДПРАВИТИ</button>
-                            <button class="btn-delete-full" onclick="quickDelete('${item.id}')">🗑</button>
-                        </div>
-                    </div>
-                `}
+                    <div class="mini-badge">ВІДПРАВЛЕНО</div>
+                    <button class="mini-delete" onclick="askDeletePassword('${item.id}')">🗑</button>
+                </div>
             </div>`;
-    }).join('');
-
-    if (list.innerHTML !== newContent) {
-        list.innerHTML = newContent;
-    }
+        } else {
+            html += `
+            <div class="card ${isOk ? 'is-ok' : ''}">
+                <div class="full-content">
+                    <div style="font-size:11px; color:#888; margin-bottom:8px;">📅 ${item.date}</div>
+                    <label>Назва партії</label>
+                    <input type="text" value="${item.name}" onchange="updateField('${item.id}','name',this.value)">
+                    <label>Прихід (кг)</label>
+                    <input type="number" step="0.001" value="${item.weight_in}" onchange="updateField('${item.id}','weight_in',this.value)">
+                    <div class="balance-box ${isOk ? 'balance-ok' : 'balance-err'}">ЗАЛИШОК: ${balance.toFixed(3)} кг</div>
+                    ${renderRow(item.id, '🔪 ПФ', 'pf', item.pf)}
+                    ${renderRow(item.id, '🍔 Фарш', 'mince', item.mince)}
+                    ${renderRow(item.id, '🗑 Відхід', 'waste', item.waste)}
+                    <div class="card-actions">
+                        <button class="btn-send" onclick="sendToTG('${item.id}', this)">ВІДПРАВИТИ В TG</button>
+                        <button class="btn-delete-full" onclick="quickDelete('${item.id}')">🗑</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+    });
+    list.innerHTML = html;
 }
 
 function renderRow(id, label, field, total) {
     return `<div class="sum-container">
         <div style="font-size:14px;">${label}: <b>${total} кг</b></div>
         <div class="add-row">
-            <input type="number" id="in-${field}-${id}" placeholder="+ кг">
+            <input type="number" step="0.001" id="in-${field}-${id}" placeholder="+ кг" onkeydown="if(event.key==='Enter') addWeight('${id}','${field}')">
             <button class="btn-plus" onclick="addWeight('${id}','${field}')">+</button>
         </div>
     </div>`;
 }
 
-// Функції модалок (closeModal, quickDelete тощо) залишаються як у вашому відео
 window.askDeletePassword = (id) => { pendingDeleteId = id; document.getElementById('deleteModal').classList.add('open'); };
 window.closeModal = () => { document.getElementById('deleteModal').classList.remove('open'); renderCards(cachedData); };
 window.confirmDelete = () => {
-    if (document.getElementById('modalPassInput').value === _AP) {
+    const inp = document.getElementById('modalPassInput');
+    if (inp.value === _AP) {
         firebase.database().ref('meat_batches/' + pendingDeleteId).remove();
-        closeModal();
-    } else { alert("Невірний пароль"); }
+        inp.value = ''; closeModal();
+    } else { alert("Невірний пароль"); inp.value = ''; }
 };
 window.quickDelete = (id) => { pendingQuickDeleteId = id; document.getElementById('confirmModal').classList.add('open'); };
 window.closeConfirmModal = () => { document.getElementById('confirmModal').classList.remove('open'); renderCards(cachedData); };
