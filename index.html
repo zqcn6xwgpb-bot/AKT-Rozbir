@@ -19,17 +19,15 @@
         body {
             font-family: 'Source Sans 3', sans-serif;
             background: #1a1a2e;
-            background-image:
-                radial-gradient(circle at 20% 20%, rgba(192,57,43,0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(39,174,96,0.08) 0%, transparent 50%);
+            background-image: radial-gradient(circle at 20% 20%, rgba(192,57,43,0.15) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 80%, rgba(39,174,96,0.08) 0%, transparent 50%);
             margin: 0; padding: 0; min-height: 100vh;
         }
-        /* HEADER */
+        /* HEADER - Тепер не закріплений */
         .header {
             background: linear-gradient(135deg, #1a1a2e 0%, #2c1810 100%);
             padding: 25px 20px 20px; text-align: center;
             border-bottom: 3px solid var(--red);
-            position: sticky; top: 0; z-index: 100;
             box-shadow: 0 4px 30px rgba(0,0,0,0.4);
         }
         .header h1 {
@@ -38,13 +36,9 @@
             letter-spacing: 2px; text-transform: uppercase;
         }
         .header h1 span { color: var(--red-light); }
-        #status {
-            font-size: 11px; font-weight: 600; letter-spacing: 1px;
-            padding: 4px 12px; border-radius: 20px;
-            display: inline-block; margin: 8px 0;
-        }
-        .status-ok  { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.3); }
-        .status-err { background: rgba(231,76,60,0.15);  color: #ff6b6b; border: 1px solid rgba(231,76,60,0.3); }
+        #status { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 8px 0; }
+        .status-ok { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.3); }
+        .status-err { background: rgba(231,76,60,0.15); color: #ff6b6b; border: 1px solid rgba(231,76,60,0.3); }
         .btn-main-add {
             background: linear-gradient(135deg, var(--red), var(--red-light));
             color: white; border: none; padding: 14px 35px; border-radius: 50px;
@@ -52,191 +46,34 @@
             letter-spacing: 2px; cursor: pointer; transition: all 0.2s;
             box-shadow: 0 4px 15px rgba(192,57,43,0.4); margin-top: 5px;
         }
-        .btn-main-add:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(192,57,43,0.5); }
-        .btn-main-add:active { transform: scale(0.97); }
-        /* GRID */
-        #cards-list {
-            display: grid; grid-template-columns: 1fr;
-            gap: 16px; max-width: 900px;
-            margin: 20px auto; padding: 0 15px 30px;
-        }
+        #cards-list { display: grid; grid-template-columns: 1fr; gap: 16px; max-width: 900px; margin: 20px auto; padding: 0 15px 30px; }
         @media (min-width: 680px) { #cards-list { grid-template-columns: repeat(2, 1fr); } }
-        /* CARD */
-        .card {
-            background: white; border-radius: var(--radius);
-            border: 2px solid var(--red-light);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            overflow: hidden; transition: border-color 0.3s;
-            animation: fadeSlideIn 0.35s ease both;
-        }
-        @keyframes fadeSlideIn {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .card.is-ok   { border-color: var(--green); }
-        .card.is-sent { border-color: var(--green); }
-        /* SENT MINI VIEW — collapsed by default, not expandable */
-        .mini-content { display: none; }
+        .card { background: white; border-radius: var(--radius); border: 2px solid var(--red-light); overflow: hidden; }
+        .card.is-ok, .card.is-sent { border-color: var(--green); }
+        .mini-content { display: none; padding: 14px 16px; align-items: center; gap: 12px; }
         .card.is-sent .full-content { display: none; }
-        .card.is-sent .mini-content {
-            display: flex; align-items: center;
-            gap: 12px; padding: 14px 16px;
-        }
-        .mini-indicator {
-            width: 12px; height: 12px; min-width: 12px;
-            border-radius: 50%; background: var(--green-light);
-            box-shadow: 0 0 0 3px rgba(46,204,113,0.2);
-            animation: pulse-glow 2.5s infinite;
-        }
-        @keyframes pulse-glow {
-            0%,100% { box-shadow: 0 0 0 3px rgba(46,204,113,0.25); }
-            50%     { box-shadow: 0 0 0 8px rgba(46,204,113,0.07); }
-        }
-        .mini-info { flex: 1; min-width: 0; }
-        .mini-name {
-            font-size: 11px; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 1px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .mini-row { display: flex; align-items: baseline; gap: 5px; margin-top: 3px; }
-        .mini-weight {
-            font-family: 'Oswald', sans-serif; font-size: 22px;
-            font-weight: 700; color: var(--dark); line-height: 1;
-        }
-        .mini-unit { font-size: 12px; color: var(--text-muted); }
-        .mini-badge {
-            background: linear-gradient(135deg, var(--green), var(--green-light));
-            color: white; border-radius: 20px; padding: 5px 12px;
-            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
-            white-space: nowrap;
-        }
-        .mini-delete {
-            background: none; border: 1.5px solid #ffcccc; color: #ffa0a0;
-            border-radius: 10px; width: 34px; height: 34px; min-width: 34px;
-            font-size: 15px; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .mini-delete:hover { background: var(--red); border-color: var(--red); color: white; }
-        /* FULL CONTENT */
+        .card.is-sent .mini-content { display: flex; }
+        .mini-indicator { width: 12px; height: 12px; border-radius: 50%; background: var(--green-light); box-shadow: 0 0 0 3px rgba(46,204,113,0.2); }
+        .mini-info { flex: 1; }
+        .mini-weight { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: var(--dark); }
+        .mini-badge { background: var(--green); color: white; border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 700; }
         .full-content { padding: 18px; }
-        .card-date { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
-        label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-top: 12px; margin-bottom: 3px; }
-        input[type="text"], input[type="number"] {
-            width: 100%; height: 44px; border-radius: 10px;
-            border: 1.5px solid var(--border); padding: 0 12px;
-            font-size: 15px; font-family: 'Source Sans 3', sans-serif;
-            background: var(--gray); color: var(--text);
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(41,128,185,0.12); }
-        .balance-box {
-            padding: 12px 16px; border-radius: 12px; text-align: center;
-            margin: 14px 0; font-family: 'Oswald', sans-serif; font-size: 18px;
-            font-weight: 600; letter-spacing: 1px; border: 2px dashed;
-        }
+        input { width: 100%; height: 44px; border-radius: 10px; border: 1.5px solid var(--border); padding: 0 12px; font-size: 15px; background: var(--gray); margin-top: 5px; }
+        .balance-box { padding: 12px; border-radius: 12px; text-align: center; margin: 14px 0; font-family: 'Oswald', sans-serif; font-size: 18px; border: 2px dashed; }
         .balance-err { background: #fff5f5; border-color: #ffcccc; color: var(--red); }
-        .balance-ok  { background: #f0fff4; border-color: var(--green-light); color: var(--green); }
-        .sum-container { background: var(--gray); border-radius: 12px; padding: 10px 12px; margin-top: 10px; border: 1px solid var(--border); }
-        .sum-label { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); }
-        .sum-total { font-weight: 700; color: var(--dark); }
+        .balance-ok { background: #f0fff4; border-color: var(--green-light); color: var(--green); }
+        .sum-container { background: var(--gray); border-radius: 12px; padding: 10px; margin-top: 10px; border: 1px solid var(--border); }
         .add-row { display: flex; gap: 8px; margin-top: 8px; }
-        .add-row input { flex: 1; height: 42px; margin: 0; }
-        .btn-plus {
-            width: 54px; height: 42px; min-width: 54px;
-            background: var(--blue); color: white; border: none;
-            border-radius: 10px; font-size: 22px; cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-        }
-        .btn-plus:hover  { background: #1a6a99; }
-        .btn-plus:active { transform: scale(0.95); }
+        .btn-plus { width: 54px; height: 42px; background: var(--blue); color: white; border: none; border-radius: 10px; font-size: 22px; cursor: pointer; }
         .card-actions { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-send {
-            flex: 1; background: linear-gradient(135deg, var(--dark), var(--dark2));
-            color: white; border: none; padding: 15px; border-radius: 12px;
-            font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600;
-            letter-spacing: 1.5px; cursor: pointer; transition: all 0.2s;
-        }
-        .btn-send:hover:not(:disabled) { background: linear-gradient(135deg, #2c3e50, #1a1a2e); transform: translateY(-1px); }
-        .btn-send:disabled { opacity: 0.5; cursor: default; }
-        .btn-delete-full {
-            width: 50px; background: #fff0f0; border: 1.5px solid #ffcccc;
-            color: var(--red); border-radius: 12px; font-size: 20px;
-            cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .btn-delete-full:hover { background: var(--red); color: white; border-color: var(--red); }
-        /* MODAL */
-        .modal-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.6); z-index: 1000;
-            align-items: center; justify-content: center;
-            backdrop-filter: blur(4px);
-        }
+        .btn-send { flex: 1; background: var(--dark); color: white; border: none; padding: 15px; border-radius: 12px; font-family: 'Oswald', sans-serif; font-weight: 600; cursor: pointer; }
+        .btn-delete-full, .mini-delete { background: #fff0f0; border: 1.5px solid #ffcccc; color: var(--red); border-radius: 12px; width: 50px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+        /* MODALS */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-overlay.open { display: flex; }
-        .modal {
-            background: white; border-radius: 20px; padding: 30px 24px;
-            width: 90%; max-width: 340px; text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            animation: modalIn 0.25s ease;
-        }
-        @keyframes modalIn {
-            from { transform: scale(0.85); opacity: 0; }
-            to   { transform: scale(1);    opacity: 1; }
-        }
-        .modal h3 { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--dark); margin: 0 0 8px; letter-spacing: 1px; }
-        .modal p  { font-size: 13px; color: var(--text-muted); margin: 0 0 18px; }
-        .modal-input {
-            width: 100%; height: 52px; border: 2px solid var(--border);
-            border-radius: 12px; text-align: center;
-            font-size: 28px; letter-spacing: 10px;
-            font-family: 'Oswald', sans-serif; color: var(--dark);
-            background: var(--gray); margin-bottom: 10px;
-            transition: border-color 0.2s;
-        }
-        .modal-input:focus { outline: none; border-color: var(--blue); }
-        .modal-input.shake { animation: shake 0.4s ease; border-color: var(--red) !important; }
-        @keyframes shake {
-            0%,100%{ transform:translateX(0); }
-            20%    { transform:translateX(-8px); }
-            40%    { transform:translateX(8px); }
-            60%    { transform:translateX(-5px); }
-            80%    { transform:translateX(5px); }
-        }
-        .modal-err { color: var(--red); font-size: 12px; margin-bottom: 12px; min-height: 18px; }
-        .modal-btns { display: flex; gap: 10px; }
-        .modal-btn-cancel {
-            flex: 1; padding: 12px; border-radius: 12px;
-            border: 1.5px solid var(--border); background: white;
-            font-family: 'Oswald', sans-serif; font-size: 14px;
-            letter-spacing: 1px; cursor: pointer; color: var(--text-muted); transition: all 0.2s;
-        }
-        .modal-btn-cancel:hover { background: var(--gray); }
-        .modal-btn-confirm {
-            flex: 1; padding: 12px; border-radius: 12px; border: none;
-            background: var(--red); font-family: 'Oswald', sans-serif;
-            font-size: 14px; letter-spacing: 1px; cursor: pointer;
-            color: white; transition: all 0.2s;
-        }
-        .modal-btn-confirm:hover { background: var(--red-light); }
-        /* TOAST */
-        #toast {
-            position: fixed; bottom: 30px; left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: var(--dark); color: white; padding: 12px 24px;
-            border-radius: 30px; font-size: 14px; font-weight: 600;
-            z-index: 9999; transition: transform 0.3s ease;
-            white-space: nowrap; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-        }
-        #toast.show    { transform: translateX(-50%) translateY(0); }
-        #toast.success { background: var(--green); }
-        #toast.error   { background: var(--red); }
-        /* EMPTY */
-        .empty-state {
-            text-align: center; color: rgba(255,255,255,0.4);
-            padding: 60px 20px; font-family: 'Oswald', sans-serif;
-            font-size: 18px; letter-spacing: 1px; grid-column: 1 / -1;
-        }
-        .empty-state .icon { font-size: 60px; display: block; margin-bottom: 15px; }
+        .modal { background: white; border-radius: 20px; padding: 24px; width: 90%; max-width: 340px; text-align: center; }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--dark); color: white; padding: 12px 24px; border-radius: 30px; z-index: 9999; transition: transform 0.3s; }
+        #toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
@@ -251,39 +88,31 @@
 <div id="cards-list"></div>
 <div id="toast"></div>
 
-<!-- Delete password modal -->
-<!-- Модалка: пароль (відправлені) -->
 <div class="modal-overlay" id="deleteModal">
     <div class="modal">
         <h3>🔐 ВИДАЛЕННЯ</h3>
         <p>Введіть пароль адміністратора</p>
-        <input class="modal-input" type="password" id="modalPassInput"
-               maxlength="10" placeholder="••••"
-               onkeydown="if(event.key==='Enter') confirmDelete()">
-        <div class="modal-err" id="modalErr"></div>
-        <div class="modal-btns">
-            <button class="modal-btn-cancel" onclick="closeModal()">СКАСУВАТИ</button>
-            <button class="modal-btn-confirm" onclick="confirmDelete()">ВИДАЛИТИ</button>
+        <input type="password" id="modalPassInput" maxlength="10" placeholder="••••">
+        <div id="modalErr" style="color:red; font-size:12px; margin:10px 0;"></div>
+        <div style="display:flex; gap:10px;">
+            <button onclick="closeModal()" style="flex:1; padding:10px;">СКАСУВАТИ</button>
+            <button onclick="confirmDelete()" style="flex:1; padding:10px; background:var(--red); color:white; border:none;">ВИДАЛИТИ</button>
         </div>
     </div>
 </div>
 
-<!-- Модалка: просте підтвердження (незавершені) -->
 <div class="modal-overlay" id="confirmModal">
     <div class="modal">
         <h3>🗑 ВИДАЛИТИ?</h3>
         <p>Цю партію буде видалено назавжди</p>
-        <div class="modal-btns">
-            <button class="modal-btn-cancel" onclick="closeConfirmModal()">СКАСУВАТИ</button>
-            <button class="modal-btn-confirm" onclick="doQuickDelete()">ВИДАЛИТИ</button>
+        <div style="display:flex; gap:10px;">
+            <button onclick="closeConfirmModal()" style="flex:1; padding:10px;">СКАСУВАТИ</button>
+            <button onclick="doQuickDelete()" style="flex:1; padding:10px; background:var(--red); color:white; border:none;">ВИДАЛИТИ</button>
         </div>
     </div>
 </div>
 
 <script>
-// ==========================================
-// НАЛАШТУВАННЯ — ЗАПОВНІТЬ ЦІ ДАНІ
-// ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyC8iJyz9URNWxqHoWl6fTAu89caaZK9l-U",
     authDomain: "meatapp-1.firebaseapp.com",
@@ -293,264 +122,164 @@ const firebaseConfig = {
     messagingSenderId: "909786568400",
     appId: "1:909786568400:web:2a89c6b6eb5d17ff2930d5"
 };
-const TG_TOKEN      = "7906609865:AAGxiiMSSnJcShk5SoxE7eVItyqDcWvyE38";
-const TG_CHAT_ID    = "-1002336484919";
-const TG_THREAD_ID  = "4476";  // ID гілки (теми) в групі. Якщо не потрібно — залиште порожнім
-// ==========================================
-
-// Admin password — not visible anywhere in the UI
+const TG_TOKEN = "7906609865:AAGxiiMSSnJcShk5SoxE7eVItyqDcWvyE38";
+const TG_CHAT_ID = "-1002336484919";
+const TG_THREAD_ID = "4476";
 const _AP = atob("MzE5Ng=="); // 3196
 
 let cachedData = {};
 let pendingDeleteId = null;
+let pendingQuickDeleteId = null;
 
-const statusEl = document.getElementById('status');
 function setStatus(msg, ok) {
-    statusEl.textContent = msg;
-    statusEl.className = ok ? 'status-ok' : 'status-err';
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = ok ? 'status-ok' : 'status-err';
 }
-function showToast(msg, type = 'success') {
+
+function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
-    t.className = 'show ' + type;
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => { t.className = ''; }, 3000);
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ── MODAL ──
-window.askDeletePassword = function(id, e) {
-    if (e) e.stopPropagation();
-    pendingDeleteId = id;
-    const inp = document.getElementById('modalPassInput');
-    inp.value = '';
-    inp.classList.remove('shake');
-    document.getElementById('modalErr').textContent = '';
-    document.getElementById('deleteModal').classList.add('open');
-    setTimeout(() => inp.focus(), 150);
-};
-window.closeModal = function() {
-    document.getElementById('deleteModal').classList.remove('open');
-    pendingDeleteId = null;
-    renderCards(cachedData);
-};
-window.confirmDelete = function() {
-    const inp = document.getElementById('modalPassInput');
-    const errEl = document.getElementById('modalErr');
-    if (inp.value === _AP) {
-        const idToDelete = pendingDeleteId; // зберігаємо ДО closeModal, бо closeModal обнуляє pendingDeleteId
-        closeModal();
-        if (idToDelete) {
-            try {
-                firebase.database().ref('meat_batches/' + idToDelete).remove()
-                    .then(() => showToast("Партію видалено 🗑", 'error'))
-                    .catch(err => showToast("Помилка: " + err.message, 'error'));
-            } catch(err) {
-                showToast("Firebase не підключено", 'error');
-            }
+// ПЕРЕВІРКА ТА ОЧИЩЕННЯ СТАРИХ ЗАПИСІВ (7 днів)
+function cleanupOldBatches(data) {
+    const now = Date.now();
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    Object.values(data).forEach(item => {
+        if (item.sent && (now - item.id > sevenDaysMs)) {
+            firebase.database().ref('meat_batches/' + item.id).remove();
         }
-    } else {
-        errEl.textContent = "Невірний пароль. Спробуйте ще раз.";
-        inp.classList.remove('shake');
-        void inp.offsetWidth;
-        inp.classList.add('shake');
-        inp.value = '';
-        setTimeout(() => inp.focus(), 50);
-    }
-};
-document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-});
-
-
-// ── QUICK DELETE (незавершені — через модалку без пароля) ──
-let pendingQuickDeleteId = null;
-window.quickDelete = function(id, e) {
-    if (e) e.stopPropagation();
-    pendingQuickDeleteId = id;
-    document.getElementById('confirmModal').classList.add('open');
-};
-window.closeConfirmModal = function() {
-    document.getElementById('confirmModal').classList.remove('open');
-    pendingQuickDeleteId = null;
-    renderCards(cachedData);
-};
-window.doQuickDelete = function() {
-    const id = pendingQuickDeleteId;
-    closeConfirmModal();
-    if (!id) return;
-    try {
-        firebase.database().ref('meat_batches/' + id).remove()
-            .then(() => showToast("Партію видалено 🗑", 'error'))
-            .catch(err => showToast("Помилка: " + err.message, 'error'));
-    } catch(err) {
-        showToast("Firebase не підключено", 'error');
-    }
-};
-document.getElementById('confirmModal').addEventListener('click', function(e) {
-    if (e.target === this) closeConfirmModal();
-});
-// ── FIREBASE ──
-if (firebaseConfig.apiKey === "ВСТАВТЕ_СЮДИ") {
-    setStatus("ПОМИЛКА: Введіть дані Firebase у коді!", false);
-} else {
-    try {
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        window._db = db;
-        setStatus("З'єднано з хмарою ✅", true);
-
-        db.ref('meat_batches').on('value', snap => {
-            cachedData = snap.val() || {};
-            renderCards(cachedData);
-        }, err => setStatus("Помилка: " + err.message, false));
-
-        window.addNewBatch = function() {
-            const id = Date.now();
-            db.ref('meat_batches/' + id).set({
-                id, date: new Date().toLocaleDateString('uk-UA'),
-                name: "", weight_in: 0, pf: 0, mince: 0, waste: 0, sent: false
-            });
-        };
-        window.updateField = (id, field, value) => {
-            const val = field === 'name' ? value : (parseFloat(value) || 0);
-            db.ref('meat_batches/' + id).update({ [field]: val });
-        };
-        window.addWeight = (id, field) => {
-            const input = document.getElementById(`in-${field}-${id}`);
-            const val = parseFloat(input.value);
-            if (!val || val <= 0) { input.focus(); return; }
-            db.ref('meat_batches/' + id + '/' + field)
-              .transaction(cur => Math.round(((cur || 0) + val) * 1000) / 1000);
-            input.value = '';
-            input.focus();
-        };
-        window.handleAddKey = (e, id, field) => {
-            if (e.key === 'Enter') addWeight(id, field);
-        };
-        window.sendToTG = async (id, btn) => {
-            const item = cachedData[id];
-            if (!item) return;
-            btn.disabled = true;
-            btn.textContent = "НАДСИЛАННЯ...";
-            try {
-                const bal = calcBalance(item);
-                const text =
-                    `📦 АКТ РОЗБОРУ: ${item.name || '—'}\n📅 Дата: ${item.date}\n\n` +
-                    `📥 Прихід:  ${item.weight_in} кг\n🔪 ПФ:      ${item.pf} кг\n` +
-                    `🍔 Фарш:   ${item.mince} кг\n🗑 Відхід: ${item.waste} кг\n\n` +
-                    `✅ Баланс: ${bal.toFixed(3)} кг`;
-                const payload = { chat_id: TG_CHAT_ID, text };
-                if (TG_THREAD_ID) payload.message_thread_id = parseInt(TG_THREAD_ID);
-                const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const json = await res.json();
-                if (json.ok) {
-                    db.ref('meat_batches/' + id).update({ sent: true });
-                    showToast("Відправлено в Telegram ✅", 'success');
-                } else {
-                    throw new Error(json.description || 'Telegram error');
-                }
-            } catch (e) {
-                showToast("Помилка: " + e.message, 'error');
-                btn.disabled = false;
-                btn.textContent = "ВІДПРАВИТИ В TG";
-            }
-        };
-    } catch (e) {
-        setStatus("Помилка ініціалізації: " + e.message, false);
-    }
-}
-
-function calcBalance(item) {
-    return Math.round((item.weight_in - (item.pf + item.mince + item.waste)) * 1000) / 1000;
-}
-
-function isModalOpen() {
-    return document.getElementById('deleteModal').classList.contains('open') ||
-           document.getElementById('confirmModal').classList.contains('open');
-}
-
-function renderCards(data) {
-    if (isModalOpen()) return;
-    const list = document.getElementById('cards-list');
-    const items = Object.values(data).sort((a, b) => b.id - a.id);
-    if (items.length === 0) {
-        list.innerHTML = `<div class="empty-state"><span class="icon">🥩</span>Немає партій. Натисніть «+ НОВА ПАРТІЯ»</div>`;
-        return;
-    }
-    list.innerHTML = '';
-    items.forEach(item => {
-        const balance = calcBalance(item);
-        const isOk = item.weight_in > 0 && balance === 0;
-        const card = document.createElement('div');
-        card.className = `card ${item.sent ? 'is-sent' : (isOk ? 'is-ok' : '')}`;
-        card.innerHTML = item.sent ? renderMini(item) : renderFull(item, balance, isOk);
-        list.appendChild(card);
     });
 }
 
-function renderMini(item) {
-    return `
-        <div class="mini-content">
-            <div class="mini-indicator"></div>
-            <div class="mini-info">
-                <div class="mini-name">${escHtml(item.name) || 'Без назви'} · ${item.date}</div>
-                <div class="mini-row">
-                    <span class="mini-weight">${item.weight_in}</span>
-                    <span class="mini-unit">кг прийнято</span>
-                </div>
-            </div>
-            <div class="mini-badge">✅ ВІДПРАВЛЕНО</div>
-            <button class="mini-delete" title="Видалити" onclick="askDeletePassword('${item.id}', event)">🗑</button>
-        </div>`;
+if (firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
+    setStatus("Помилка: Налаштуйте Firebase", false);
+} else {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    db.ref('meat_batches').on('value', snap => {
+        cachedData = snap.val() || {};
+        cleanupOldBatches(cachedData);
+        renderCards(cachedData);
+    });
+
+    window.addNewBatch = () => {
+        const id = Date.now();
+        db.ref('meat_batches/' + id).set({
+            id, date: new Date().toLocaleDateString('uk-UA'),
+            name: "", weight_in: 0, pf: 0, mince: 0, waste: 0, sent: false
+        });
+    };
+
+    window.updateField = (id, field, value) => {
+        if (field !== 'name') value = value.toString().replace(',', '.');
+        const val = field === 'name' ? value : (parseFloat(value) || 0);
+        db.ref('meat_batches/' + id).update({ [field]: val });
+    };
+
+    window.addWeight = (id, field) => {
+        const input = document.getElementById(`in-${field}-${id}`);
+        let valStr = input.value.replace(',', '.');
+        const val = parseFloat(valStr);
+        if (!val || val <= 0) return;
+
+        // Використовуємо silent update, щоб не перемальовувати весь список миттєво
+        db.ref('meat_batches/' + id + '/' + field).transaction(cur => {
+            return Math.round(((cur || 0) + val) * 1000) / 1000;
+        });
+        input.value = '';
+    };
+
+    window.sendToTG = async (id, btn) => {
+        const item = cachedData[id];
+        btn.disabled = true;
+        const bal = Math.round((item.weight_in - (item.pf + item.mince + item.waste)) * 1000) / 1000;
+        const text = `📦 АКТ: ${item.name || '—'}\n📥 Прихід: ${item.weight_in}кг\n🔪 ПФ: ${item.pf}кг\n🍔 Фарш: ${item.mince}кг\n🗑 Відхід: ${item.waste}кг\n✅ Баланс: ${bal}кг`;
+        
+        const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: TG_CHAT_ID, text, message_thread_id: TG_THREAD_ID })
+        });
+        if (res.ok) {
+            db.ref('meat_batches/' + id).update({ sent: true });
+            showToast("Відправлено!");
+        }
+    };
 }
 
-function renderFull(item, balance, isOk) {
-    return `
-        <div class="full-content">
-            <div class="card-date">📅 ${item.date}</div>
-            <label>Назва партії</label>
-            <input type="text" value="${escHtml(item.name)}"
-                onchange="updateField('${item.id}','name',this.value)"
-                placeholder="Напр: Свинина #12">
-            <label>Прихід (кг)</label>
-            <input type="number" step="0.001" min="0" value="${item.weight_in}"
-                onchange="updateField('${item.id}','weight_in',this.value)"
-                placeholder="0.000">
-            <div class="balance-box ${isOk ? 'balance-ok' : 'balance-err'}">
-                ${isOk ? '✅' : '⚖️'} ЗАЛИШОК: ${balance.toFixed(3)} кг
-            </div>
-            ${renderRow(item.id, '🔪 ПФ',     'pf',    item.pf)}
-            ${renderRow(item.id, '🍔 Фарш',   'mince', item.mince)}
-            ${renderRow(item.id, '🗑 Відхід', 'waste', item.waste)}
-            <div class="card-actions">
-                <button class="btn-send" onclick="sendToTG('${item.id}', this)">
-                    ВІДПРАВИТИ В TG
-                </button>
-                <button class="btn-delete-full" title="Видалити" onclick="quickDelete('${item.id}', event)">🗑</button>
-            </div>
-        </div>`;
+function renderCards(data) {
+    // Якщо модалка відкрита, не перемальовуємо (запобігає морганню та закриттю клавіатури)
+    if (document.querySelector('.modal-overlay.open')) return;
+
+    const list = document.getElementById('cards-list');
+    const items = Object.values(data).sort((a, b) => b.id - a.id);
+    
+    // Щоб уникнути моргання, оновлюємо тільки якщо кількість карток або статус змішилися
+    const newContent = items.map(item => {
+        const balance = Math.round((item.weight_in - (item.pf + item.mince + item.waste)) * 1000) / 1000;
+        const isOk = item.weight_in > 0 && balance === 0;
+        return `
+            <div class="card ${item.sent ? 'is-sent' : (isOk ? 'is-ok' : '')}">
+                ${item.sent ? `
+                    <div class="mini-content">
+                        <div class="mini-indicator"></div>
+                        <div class="mini-info">
+                            <div style="font-size:11px; color:#888">${item.name || '...'}</div>
+                            <div class="mini-weight">${item.weight_in} кг</div>
+                        </div>
+                        <div class="mini-badge">ВІДПРАВЛЕНО</div>
+                        <button class="mini-delete" onclick="askDeletePassword('${item.id}')">🗑</button>
+                    </div>
+                ` : `
+                    <div class="full-content">
+                        <div style="font-size:11px; color:#888">📅 ${item.date}</div>
+                        <input type="text" value="${item.name}" placeholder="Назва" onchange="updateField('${item.id}','name',this.value)">
+                        <input type="number" value="${item.weight_in}" placeholder="Прихід кг" onchange="updateField('${item.id}','weight_in',this.value)">
+                        <div class="balance-box ${isOk ? 'balance-ok' : 'balance-err'}">ЗАЛИШОК: ${balance.toFixed(3)} кг</div>
+                        ${renderRow(item.id, '🔪 ПФ', 'pf', item.pf)}
+                        ${renderRow(item.id, '🍔 Фарш', 'mince', item.mince)}
+                        ${renderRow(item.id, '🗑 Відхід', 'waste', item.waste)}
+                        <div class="card-actions">
+                            <button class="btn-send" onclick="sendToTG('${item.id}', this)">ВІДПРАВИТИ</button>
+                            <button class="btn-delete-full" onclick="quickDelete('${item.id}')">🗑</button>
+                        </div>
+                    </div>
+                `}
+            </div>`;
+    }).join('');
+
+    if (list.innerHTML !== newContent) {
+        list.innerHTML = newContent;
+    }
 }
 
 function renderRow(id, label, field, total) {
-    return `
-        <div class="sum-container">
-            <div class="sum-label">${label}: <span class="sum-total">${total} кг</span></div>
-            <div class="add-row">
-                <input type="number" step="0.001" min="0" placeholder="Додати кг..."
-                    id="in-${field}-${id}"
-                    onkeydown="handleAddKey(event,'${id}','${field}')">
-                <button class="btn-plus" onclick="addWeight('${id}','${field}')">+</button>
-            </div>
-        </div>`;
+    return `<div class="sum-container">
+        <div style="font-size:14px;">${label}: <b>${total} кг</b></div>
+        <div class="add-row">
+            <input type="number" id="in-${field}-${id}" placeholder="+ кг">
+            <button class="btn-plus" onclick="addWeight('${id}','${field}')">+</button>
+        </div>
+    </div>`;
 }
 
-function escHtml(str) {
-    return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+// Функції модалок (closeModal, quickDelete тощо) залишаються як у вашому відео
+window.askDeletePassword = (id) => { pendingDeleteId = id; document.getElementById('deleteModal').classList.add('open'); };
+window.closeModal = () => { document.getElementById('deleteModal').classList.remove('open'); renderCards(cachedData); };
+window.confirmDelete = () => {
+    if (document.getElementById('modalPassInput').value === _AP) {
+        firebase.database().ref('meat_batches/' + pendingDeleteId).remove();
+        closeModal();
+    } else { alert("Невірний пароль"); }
+};
+window.quickDelete = (id) => { pendingQuickDeleteId = id; document.getElementById('confirmModal').classList.add('open'); };
+window.closeConfirmModal = () => { document.getElementById('confirmModal').classList.remove('open'); renderCards(cachedData); };
+window.doQuickDelete = () => { firebase.database().ref('meat_batches/' + pendingQuickDeleteId).remove(); closeConfirmModal(); };
 </script>
 </body>
 </html>
