@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Meat Pro: Cloud Sync</title>
+    <title>Meat Pro: Multi-Type Sync</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -23,52 +23,55 @@
                               radial-gradient(circle at 80% 80%, rgba(39,174,96,0.08) 0%, transparent 50%);
             margin: 0; padding: 0; min-height: 100vh;
         }
-        /* HEADER - НЕ ЗАКРІПЛЕНИЙ */
         .header {
             background: linear-gradient(135deg, #1a1a2e 0%, #2c1810 100%);
-            padding: 25px 20px 20px; text-align: center;
-            border-bottom: 3px solid var(--red);
+            padding: 25px 20px 20px; text-align: center; border-bottom: 3px solid var(--red);
             box-shadow: 0 4px 30px rgba(0,0,0,0.4);
         }
-        .header h1 {
-            font-family: 'Oswald', sans-serif; font-size: 26px;
-            font-weight: 700; color: #fff; margin: 0 0 4px;
-            letter-spacing: 2px; text-transform: uppercase;
-        }
-        .header h1 span { color: var(--red-light); }
+        .header h1 { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700; color: #fff; margin: 0; text-transform: uppercase; }
+        .header span { color: var(--red-light); }
         #status { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 8px 0; }
         .status-ok { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.3); }
         .status-err { background: rgba(231,76,60,0.15); color: #ff6b6b; border: 1px solid rgba(231,76,60,0.3); }
-        .btn-main-add {
-            background: linear-gradient(135deg, var(--red), var(--red-light));
-            color: white; border: none; padding: 14px 35px; border-radius: 50px;
-            font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 600;
-            letter-spacing: 2px; cursor: pointer; transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(192,57,43,0.4); margin-top: 5px;
+        
+        .type-selector { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 15px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .btn-type-add {
+            background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 15px; border-radius: 12px; font-family: 'Oswald', sans-serif; cursor: pointer; transition: 0.2s;
         }
+        .btn-type-add:hover { background: var(--red); border-color: var(--red); }
+
         #cards-list { display: grid; grid-template-columns: 1fr; gap: 16px; max-width: 900px; margin: 20px auto; padding: 0 15px 30px; }
         @media (min-width: 680px) { #cards-list { grid-template-columns: repeat(2, 1fr); } }
-        .card { background: white; border-radius: var(--radius); border: 2px solid var(--red-light); overflow: hidden; }
+        
+        .card { background: white; border-radius: var(--radius); border: 2px solid var(--red-light); overflow: hidden; position: relative; transition: transform 0.2s; }
         .card.is-ok, .card.is-sent { border-color: var(--green); }
+        .card-type-label { position: absolute; top: 10px; right: 10px; font-size: 10px; font-weight: 700; background: var(--gray); padding: 2px 8px; border-radius: 10px; color: var(--text-muted); text-transform: uppercase; }
+        
         .mini-content { display: none; padding: 14px 16px; align-items: center; gap: 12px; }
         .card.is-sent .full-content { display: none; }
         .card.is-sent .mini-content { display: flex; }
-        .mini-indicator { width: 12px; height: 12px; border-radius: 50%; background: var(--green-light); box-shadow: 0 0 0 3px rgba(46,204,113,0.2); }
-        .mini-info { flex: 1; }
-        .mini-weight { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: var(--dark); }
-        .mini-badge { background: var(--green); color: white; border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 700; }
+        .mini-indicator { width: 12px; height: 12px; border-radius: 50%; background: var(--green-light); }
+        .mini-weight { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; }
+        
         .full-content { padding: 18px; }
-        label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 10px; }
-        input { width: 100%; height: 44px; border-radius: 10px; border: 1.5px solid var(--border); padding: 0 12px; font-size: 15px; background: var(--gray); margin-top: 5px; }
+        label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 12px; margin-bottom: 2px; }
+        input, select { width: 100%; height: 44px; border-radius: 10px; border: 1.5px solid var(--border); padding: 0 12px; font-size: 15px; background: var(--gray); margin-top: 5px; }
+        
+        /* Стилізація календаря */
+        input[type="date"] { font-family: 'Source Sans 3', sans-serif; color: var(--text); cursor: pointer; }
+
         .balance-box { padding: 12px; border-radius: 12px; text-align: center; margin: 14px 0; font-family: 'Oswald', sans-serif; font-size: 18px; border: 2px dashed; }
         .balance-err { background: #fff5f5; border-color: #ffcccc; color: var(--red); }
         .balance-ok { background: #f0fff4; border-color: var(--green-light); color: var(--green); }
+        
         .sum-container { background: var(--gray); border-radius: 12px; padding: 10px; margin-top: 10px; border: 1px solid var(--border); }
         .add-row { display: flex; gap: 8px; margin-top: 8px; }
         .btn-plus { width: 54px; height: 42px; background: var(--blue); color: white; border: none; border-radius: 10px; font-size: 22px; cursor: pointer; }
-        .card-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .card-actions { display: flex; gap: 10px; margin-top: 20px; }
         .btn-send { flex: 1; background: var(--dark); color: white; border: none; padding: 15px; border-radius: 12px; font-family: 'Oswald', sans-serif; font-weight: 600; cursor: pointer; }
-        .btn-delete-full, .mini-delete { background: #fff0f0; border: 1.5px solid #ffcccc; color: var(--red); border-radius: 12px; width: 50px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+        .btn-delete-full, .mini-delete { background: #fff0f0; border: 1.5px solid #ffcccc; color: var(--red); border-radius: 12px; width: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-overlay.open { display: flex; }
         .modal { background: white; border-radius: 20px; padding: 24px; width: 90%; max-width: 340px; text-align: center; }
@@ -81,8 +84,12 @@
 <div class="header">
     <h1>MEAT <span>PRO</span> 🥩</h1>
     <div id="status">Підключення...</div>
-    <br>
-    <button class="btn-main-add" onclick="addNewBatch()">+ НОВА ПАРТІЯ</button>
+    <div class="type-selector">
+        <button class="btn-type-add" onclick="addNewBatch('meat')">+ М'ЯСО</button>
+        <button class="btn-type-add" onclick="addNewBatch('salmon')">+ ЛОСОСЬ</button>
+        <button class="btn-type-add" onclick="addNewBatch('ribs')">+ РЕБРА</button>
+        <button class="btn-type-add" onclick="addNewBatch('mackerel')">+ СКУМБРІЯ</button>
+    </div>
 </div>
 
 <div id="cards-list"></div>
@@ -93,8 +100,7 @@
         <h3>🔐 ВИДАЛЕННЯ</h3>
         <p>Введіть пароль адміністратора</p>
         <input type="password" id="modalPassInput" maxlength="10" placeholder="••••">
-        <div id="modalErr" style="color:red; font-size:12px; margin:10px 0;"></div>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; margin-top:15px;">
             <button onclick="closeModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">СКАСУВАТИ</button>
             <button onclick="confirmDelete()" style="flex:1; padding:10px; border-radius:10px; background:var(--red); color:white; border:none;">ВИДАЛИТИ</button>
         </div>
@@ -104,8 +110,7 @@
 <div class="modal-overlay" id="confirmModal">
     <div class="modal">
         <h3>🗑 ВИДАЛИТИ?</h3>
-        <p>Цю партію буде видалено назавжди</p>
-        <div style="display:flex; gap:10px;">
+        <div style="display:flex; gap:10px; margin-top:15px;">
             <button onclick="closeConfirmModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">СКАСУВАТИ</button>
             <button onclick="doQuickDelete()" style="flex:1; padding:10px; border-radius:10px; background:var(--red); color:white; border:none;">ВИДАЛИТИ</button>
         </div>
@@ -113,9 +118,7 @@
 </div>
 
 <script>
-// ==========================================
-// НАЛАШТУВАННЯ (ВСТАВТЕ ВАШІ ДАНІ ТУТ)
-// ==========================================
+// ВСТАВТЕ ВАШІ ДАНІ ТУТ
 const firebaseConfig = {
         apiKey: "AIzaSyC8iJyz9URNWxqHoWl6fTAu89caaZK9l-U",
         authDomain: "meatapp-1.firebaseapp.com",
@@ -129,7 +132,7 @@ const firebaseConfig = {
     const TG_TOKEN = "7906609865:AAGxiiMSSnJcShk5SoxE7eVItyqDcWvyE38";
 const TG_CHAT_ID = "-1002336484919";
 const TG_THREAD_ID = "4476";
-const _AP = atob("MzE5Ng=="); // Пароль: 3196
+const _AP = atob("MzE5Ng=="); // 3196
 
 let cachedData = {};
 let pendingDeleteId = null;
@@ -148,15 +151,25 @@ function showToast(msg) {
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// Функція очищення архіву (7 днів)
-function cleanupOldBatches(data) {
-    const now = Date.now();
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    Object.values(data).forEach(item => {
-        if (item.sent && (now - item.id > sevenDaysMs)) {
-            firebase.database().ref('meat_batches/' + item.id).remove();
-        }
-    });
+// Конфігурація типів
+const TYPE_CONFIG = {
+    meat: { label: "М'ясо", fields: [{k:'pf', l:'🔪 ПФ'}, {k:'mince', l:'🍔 Фарш'}, {k:'waste', l:'🗑 Відхід'}], hasBalance: true },
+    salmon: { label: "Лосось", fields: [{k:'shashlik', l:'🍢 Шашлик'}, {k:'razbor', l:'🐟 Розбір'}, {k:'bones', l:'🦴 Кістки'}], hasBalance: true },
+    ribs: { label: "Ребра", fields: [{k:'count', l:'🔢 К-сть (шт)'}, {k:'weight', l:'⚖️ Ребра штат (вага)'}], hasBalance: false },
+    mackerel: { label: "Скумбрія", fields: [{k:'count', l:'🔢 К-сть (шт)'}], hasBalance: false }
+};
+
+// Допоміжна функція для дати у форматі YYYY-MM-DD
+function getTodayISO() {
+    const d = new Date();
+    return d.toISOString().split('T')[0];
+}
+
+// Форматування дати для Telegram (DD.MM.YYYY)
+function formatToUA(isoDate) {
+    if (!isoDate) return "—";
+    const [y, m, d] = isoDate.split('-');
+    return `${d}.${m}.${y}`;
 }
 
 if (firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
@@ -167,63 +180,61 @@ if (firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
 
     db.ref('meat_batches').on('value', snap => {
         cachedData = snap.val() || {};
-        cleanupOldBatches(cachedData);
         renderCards(cachedData);
         setStatus("З'єднано з хмарою ✅", true);
-    }, err => setStatus("Помилка БД: " + err.message, false));
+    });
 
-    window.addNewBatch = () => {
+    window.addNewBatch = (type = 'meat') => {
         const id = Date.now();
-        db.ref('meat_batches/' + id).set({
-            id, date: new Date().toLocaleDateString('uk-UA'),
-            name: "", weight_in: 0, pf: 0, mince: 0, waste: 0, sent: false
-        }).then(() => showToast("Нова партія створена"));
+        const initialData = {
+            id, type, date: getTodayISO(),
+            name: "", weight_in: 0, sent: false
+        };
+        TYPE_CONFIG[type].fields.forEach(f => initialData[f.k] = 0);
+        db.ref('meat_batches/' + id).set(initialData).then(() => showToast(`Додано: ${TYPE_CONFIG[type].label}`));
     };
 
     window.updateField = (id, field, value) => {
-        if (field !== 'name') value = value.toString().replace(',', '.');
-        const val = field === 'name' ? value : (parseFloat(value) || 0);
+        if (field !== 'name' && field !== 'date') value = value.toString().replace(',', '.');
+        const val = (field === 'name' || field === 'date') ? value : (parseFloat(value) || 0);
         db.ref('meat_batches/' + id).update({ [field]: val });
     };
 
     window.addWeight = (id, field) => {
         const input = document.getElementById(`in-${field}-${id}`);
-        if (!input) return;
-        let valStr = input.value.replace(',', '.');
-        const val = parseFloat(valStr);
-        if (!val || val <= 0) { input.focus(); return; }
-
-        db.ref('meat_batches/' + id + '/' + field).transaction(cur => {
-            return Math.round(((cur || 0) + val) * 1000) / 1000;
-        });
+        let val = parseFloat(input.value.replace(',', '.'));
+        if (!val || val <= 0) return;
+        db.ref('meat_batches/' + id + '/' + field).transaction(cur => Math.round(((cur || 0) + val) * 1000) / 1000);
         input.value = '';
-        input.focus();
     };
 
     window.sendToTG = async (id, btn) => {
         const item = cachedData[id];
-        if (!item) return;
+        const config = TYPE_CONFIG[item.type || 'meat'];
         btn.disabled = true;
-        btn.textContent = "Надсилання...";
         
-        const bal = Math.round((item.weight_in - (item.pf + item.mince + item.waste)) * 1000) / 1000;
-        const text = `📦 АКТ РОЗБОРУ: ${item.name || '—'}\n📥 Прихід: ${item.weight_in} кг\n🔪 ПФ: ${item.pf} кг\n🍔 Фарш: ${item.mince} кг\n🗑 Відхід: ${item.waste} кг\n✅ Баланс: ${bal} кг`;
+        let text = `📦 Акт розбору (${config.label}): ${item.name || '—'}\n📅 Дата приходу: ${formatToUA(item.date)}\n`;
+        if (item.weight_in > 0) text += `📥 Прихід: ${item.weight_in} кг\n`;
         
-        try {
-            const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: TG_CHAT_ID, text, message_thread_id: TG_THREAD_ID })
-            });
-            if (res.ok) {
-                db.ref('meat_batches/' + id).update({ sent: true });
-                showToast("Відправлено в TG ✅");
-            } else { throw new Error(); }
-        } catch (e) {
-            showToast("Помилка відправки");
-            btn.disabled = false;
-            btn.textContent = "ВІДПРАВИТИ";
+        config.fields.forEach(f => {
+            text += `${f.l}: ${item[f.k] || 0}\n`;
+        });
+        
+        if (config.hasBalance) {
+            const sumUsed = config.fields.reduce((acc, f) => acc + (item[f.k] || 0), 0);
+            const bal = Math.round((item.weight_in - sumUsed) * 1000) / 1000;
+            text += `✅ Баланс: ${bal} кг`;
         }
+
+        const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: TG_CHAT_ID, text, message_thread_id: TG_THREAD_ID })
+        });
+        if (res.ok) {
+            db.ref('meat_batches/' + id).update({ sent: true });
+            showToast("Відправлено!");
+        } else { btn.disabled = false; showToast("Помилка TG"); }
     };
 }
 
@@ -232,71 +243,67 @@ function renderCards(data) {
     const list = document.getElementById('cards-list');
     const items = Object.values(data).sort((a, b) => b.id - a.id);
     
-    if (items.length === 0) {
-        list.innerHTML = `<div style="color:white; text-align:center; padding:50px; grid-column:1/-1;">Натисніть "+ НОВА ПАРТІЯ"</div>`;
-        return;
-    }
-
-    let html = '';
-    items.forEach(item => {
-        const balance = Math.round((item.weight_in - (item.pf + item.mince + item.waste)) * 1000) / 1000;
+    list.innerHTML = items.map(item => {
+        const type = item.type || 'meat';
+        const config = TYPE_CONFIG[type];
+        const sumUsed = config.fields.reduce((acc, f) => acc + (item[f.k] || 0), 0);
+        const balance = Math.round((item.weight_in - sumUsed) * 1000) / 1000;
         const isOk = item.weight_in > 0 && balance === 0;
-        
-        if (item.sent) {
-            html += `
-            <div class="card is-sent">
-                <div class="mini-content" style="display:flex">
+
+        return `
+            <div class="card ${item.sent ? 'is-sent' : (config.hasBalance && isOk ? 'is-ok' : '')}">
+                <div class="card-type-label">${config.label}</div>
+                <div class="mini-content">
                     <div class="mini-indicator"></div>
                     <div class="mini-info">
-                        <div style="font-size:11px; color:#888">${item.name || 'Без назви'} · ${item.date}</div>
-                        <div class="mini-weight">${item.weight_in} кг</div>
+                        <div style="font-size:11px; color:#888">${item.name || '...'} · ${formatToUA(item.date)}</div>
+                        <div class="mini-weight">${item.weight_in || sumUsed} ${type === 'mackerel' ? 'шт' : 'кг'}</div>
                     </div>
                     <div class="mini-badge">ВІДПРАВЛЕНО</div>
                     <button class="mini-delete" onclick="askDeletePassword('${item.id}')">🗑</button>
                 </div>
-            </div>`;
-        } else {
-            html += `
-            <div class="card ${isOk ? 'is-ok' : ''}">
                 <div class="full-content">
-                    <div style="font-size:11px; color:#888; margin-bottom:8px;">📅 ${item.date}</div>
-                    <label>Назва партії</label>
-                    <input type="text" value="${item.name}" onchange="updateField('${item.id}','name',this.value)">
-                    <label>Прихід (кг)</label>
-                    <input type="number" step="0.001" value="${item.weight_in}" onchange="updateField('${item.id}','weight_in',this.value)">
-                    <div class="balance-box ${isOk ? 'balance-ok' : 'balance-err'}">ЗАЛИШОК: ${balance.toFixed(3)} кг</div>
-                    ${renderRow(item.id, '🔪 ПФ', 'pf', item.pf)}
-                    ${renderRow(item.id, '🍔 Фарш', 'mince', item.mince)}
-                    ${renderRow(item.id, '🗑 Відхід', 'waste', item.waste)}
+                    <label>Дата приходу</label>
+                    <input type="date" value="${item.date || getTodayISO()}" onchange="updateField('${item.id}','date',this.value)">
+
+                    <label>Назва / Коментар</label>
+                    <input type="text" value="${item.name}" placeholder="Напр: Стегно куряче" onchange="updateField('${item.id}','name',this.value)">
+                    
+                    ${type !== 'mackerel' && type !== 'ribs' ? `
+                        <label>Прихід (кг)</label>
+                        <input type="number" step="0.001" value="${item.weight_in}" onchange="updateField('${item.id}','weight_in',this.value)">
+                    ` : ''}
+
+                    ${config.hasBalance ? `
+                        <div class="balance-box ${isOk ? 'balance-ok' : 'balance-err'}">ЗАЛИШОК: ${balance.toFixed(3)} кг</div>
+                    ` : ''}
+
+                    ${config.fields.map(f => `
+                        <div class="sum-container">
+                            <div style="font-size:14px;">${f.l}: <b>${item[f.k] || 0}</b></div>
+                            <div class="add-row">
+                                <input type="number" step="0.001" id="in-${f.k}-${item.id}" placeholder="+ кг/шт" onkeydown="if(event.key==='Enter') addWeight('${item.id}','${f.k}')">
+                                <button class="btn-plus" onclick="addWeight('${item.id}','${f.k}')">+</button>
+                            </div>
+                        </div>
+                    `).join('')}
+
                     <div class="card-actions">
-                        <button class="btn-send" onclick="sendToTG('${item.id}', this)">ВІДПРАВИТИ В TG</button>
+                        <button class="btn-send" onclick="sendToTG('${item.id}', this)">ВІДПРАВИТИ</button>
                         <button class="btn-delete-full" onclick="quickDelete('${item.id}')">🗑</button>
                     </div>
                 </div>
             </div>`;
-        }
-    });
-    list.innerHTML = html;
-}
-
-function renderRow(id, label, field, total) {
-    return `<div class="sum-container">
-        <div style="font-size:14px;">${label}: <b>${total} кг</b></div>
-        <div class="add-row">
-            <input type="number" step="0.001" id="in-${field}-${id}" placeholder="+ кг" onkeydown="if(event.key==='Enter') addWeight('${id}','${field}')">
-            <button class="btn-plus" onclick="addWeight('${id}','${field}')">+</button>
-        </div>
-    </div>`;
+    }).join('') || '<div style="color:white;text-align:center;grid-column:1/-1;padding:40px;">Оберіть тип зверху</div>';
 }
 
 window.askDeletePassword = (id) => { pendingDeleteId = id; document.getElementById('deleteModal').classList.add('open'); };
 window.closeModal = () => { document.getElementById('deleteModal').classList.remove('open'); renderCards(cachedData); };
 window.confirmDelete = () => {
-    const inp = document.getElementById('modalPassInput');
-    if (inp.value === _AP) {
+    if (document.getElementById('modalPassInput').value === _AP) {
         firebase.database().ref('meat_batches/' + pendingDeleteId).remove();
-        inp.value = ''; closeModal();
-    } else { alert("Невірний пароль"); inp.value = ''; }
+        document.getElementById('modalPassInput').value = ''; closeModal();
+    } else { alert("Пароль!"); }
 };
 window.quickDelete = (id) => { pendingQuickDeleteId = id; document.getElementById('confirmModal').classList.add('open'); };
 window.closeConfirmModal = () => { document.getElementById('confirmModal').classList.remove('open'); renderCards(cachedData); };
