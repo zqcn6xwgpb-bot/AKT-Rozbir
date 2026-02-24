@@ -252,6 +252,7 @@
 <div id="toast"></div>
 
 <!-- Delete password modal -->
+<!-- Модалка: пароль (відправлені) -->
 <div class="modal-overlay" id="deleteModal">
     <div class="modal">
         <h3>🔐 ВИДАЛЕННЯ</h3>
@@ -263,6 +264,18 @@
         <div class="modal-btns">
             <button class="modal-btn-cancel" onclick="closeModal()">СКАСУВАТИ</button>
             <button class="modal-btn-confirm" onclick="confirmDelete()">ВИДАЛИТИ</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка: просте підтвердження (незавершені) -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+        <h3>🗑 ВИДАЛИТИ?</h3>
+        <p>Цю партію буде видалено назавжди</p>
+        <div class="modal-btns">
+            <button class="modal-btn-cancel" onclick="closeConfirmModal()">СКАСУВАТИ</button>
+            <button class="modal-btn-confirm" onclick="doQuickDelete()">ВИДАЛИТИ</button>
         </div>
     </div>
 </div>
@@ -280,9 +293,9 @@ const firebaseConfig = {
     messagingSenderId: "909786568400",
     appId: "1:909786568400:web:2a89c6b6eb5d17ff2930d5"
 };
-
-const TG_TOKEN  = "7906609865:AAGxiiMSSnJcShk5SoxE7eVItyqDcWvyE38";
-const TG_CHAT_ID = "434679930";
+const TG_TOKEN      = "7906609865:AAGxiiMSSnJcShk5SoxE7eVItyqDcWvyE38";
+const TG_CHAT_ID    = "-1002336484919";
+const TG_THREAD_ID  = "4476";  // ID гілки (теми) в групі. Якщо не потрібно — залиште порожнім
 // ==========================================
 
 // Admin password — not visible anywhere in the UI
@@ -318,15 +331,17 @@ window.askDeletePassword = function(id, e) {
 window.closeModal = function() {
     document.getElementById('deleteModal').classList.remove('open');
     pendingDeleteId = null;
+    renderCards(cachedData);
 };
 window.confirmDelete = function() {
     const inp = document.getElementById('modalPassInput');
     const errEl = document.getElementById('modalErr');
     if (inp.value === _AP) {
+        const idToDelete = pendingDeleteId; // зберігаємо ДО closeModal, бо closeModal обнуляє pendingDeleteId
         closeModal();
-        if (pendingDeleteId) {
+        if (idToDelete) {
             try {
-                firebase.database().ref('meat_batches/' + pendingDeleteId).remove()
+                firebase.database().ref('meat_batches/' + idToDelete).remove()
                     .then(() => showToast("Партію видалено 🗑", 'error'))
                     .catch(err => showToast("Помилка: " + err.message, 'error'));
             } catch(err) {
@@ -347,10 +362,22 @@ document.getElementById('deleteModal').addEventListener('click', function(e) {
 });
 
 
-// ── QUICK DELETE (незавершені — без пароля) ──
+// ── QUICK DELETE (незавершені — через модалку без пароля) ──
+let pendingQuickDeleteId = null;
 window.quickDelete = function(id, e) {
     if (e) e.stopPropagation();
-    if (!confirm('Видалити цю партію?')) return;
+    pendingQuickDeleteId = id;
+    document.getElementById('confirmModal').classList.add('open');
+};
+window.closeConfirmModal = function() {
+    document.getElementById('confirmModal').classList.remove('open');
+    pendingQuickDeleteId = null;
+    renderCards(cachedData);
+};
+window.doQuickDelete = function() {
+    const id = pendingQuickDeleteId;
+    closeConfirmModal();
+    if (!id) return;
     try {
         firebase.database().ref('meat_batches/' + id).remove()
             .then(() => showToast("Партію видалено 🗑", 'error'))
@@ -359,6 +386,9 @@ window.quickDelete = function(id, e) {
         showToast("Firebase не підключено", 'error');
     }
 };
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+    if (e.target === this) closeConfirmModal();
+});
 // ── FIREBASE ──
 if (firebaseConfig.apiKey === "ВСТАВТЕ_СЮДИ") {
     setStatus("ПОМИЛКА: Введіть дані Firebase у коді!", false);
@@ -409,10 +439,12 @@ if (firebaseConfig.apiKey === "ВСТАВТЕ_СЮДИ") {
                     `📥 Прихід:  ${item.weight_in} кг\n🔪 ПФ:      ${item.pf} кг\n` +
                     `🍔 Фарш:   ${item.mince} кг\n🗑 Відхід: ${item.waste} кг\n\n` +
                     `✅ Баланс: ${bal.toFixed(3)} кг`;
+                const payload = { chat_id: TG_CHAT_ID, text };
+                if (TG_THREAD_ID) payload.message_thread_id = parseInt(TG_THREAD_ID);
                 const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: TG_CHAT_ID, text })
+                    body: JSON.stringify(payload)
                 });
                 const json = await res.json();
                 if (json.ok) {
@@ -436,7 +468,13 @@ function calcBalance(item) {
     return Math.round((item.weight_in - (item.pf + item.mince + item.waste)) * 1000) / 1000;
 }
 
+function isModalOpen() {
+    return document.getElementById('deleteModal').classList.contains('open') ||
+           document.getElementById('confirmModal').classList.contains('open');
+}
+
 function renderCards(data) {
+    if (isModalOpen()) return;
     const list = document.getElementById('cards-list');
     const items = Object.values(data).sort((a, b) => b.id - a.id);
     if (items.length === 0) {
