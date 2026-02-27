@@ -84,12 +84,13 @@
 <div class="header">
     <h1>MEAT <span>PRO</span> 🥩</h1>
     <div id="status">Підключення...</div>
-    <div class="type-selector">
-        <button class="btn-type-add" onclick="addNewBatch('meat')">+ М'ЯСО</button>
-        <button class="btn-type-add" onclick="addNewBatch('salmon')">+ ЛОСОСЬ</button>
-        <button class="btn-type-add" onclick="addNewBatch('ribs')">+ РЕБРА</button>
-        <button class="btn-type-add" onclick="addNewBatch('mackerel')">+ СКУМБРІЯ</button>
-    </div>
+   <div class="type-selector">
+    <button class="btn-type-add" onclick="addNewBatch('meat')">+ М'ЯСО</button>
+    <button class="btn-type-add" onclick="addNewBatch('lamb')">+ БАРАНИНА</button>
+    <button class="btn-type-add" onclick="addNewBatch('salmon')">+ ЛОСОСЬ</button>
+    <button class="btn-type-add" onclick="addNewBatch('ribs')">+ РЕБРА</button>
+    <button class="btn-type-add" onclick="addNewBatch('mackerel')">+ СКУМБРІЯ</button>
+</div>
 </div>
 
 <div id="cards-list"></div>
@@ -154,6 +155,7 @@ function showToast(msg) {
 // Конфігурація типів
 const TYPE_CONFIG = {
     meat: { label: "М'ясо", fields: [{k:'pf', l:'🔪 ПФ'}, {k:'mince', l:'🍔 Фарш'}, {k:'waste', l:'🗑 Відхід'}], hasBalance: true },
+    lamb: { label: "Баранина", fields: [{k:'fillet', l:'🥩 Розбір'}, {k:'waste', l:'🗑 Кістки та жир'}], hasBalance: true },
     salmon: { label: "Лосось", fields: [{k:'shashlik', l:'🍢 Шашлик'}, {k:'razbor', l:'🐟 Розбір'}, {k:'bones', l:'🦴 Кістки'}], hasBalance: true },
     ribs: { label: "Ребра", fields: [{k:'count', l:'🔢 К-сть (шт)'}, {k:'weight', l:'⚖️ Ребра штат (вага)'}], hasBalance: false },
     mackerel: { label: "Скумбрія", fields: [{k:'count', l:'🔢 К-сть (шт)'}], hasBalance: false }
