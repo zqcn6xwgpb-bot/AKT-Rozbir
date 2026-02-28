@@ -77,9 +77,74 @@
         .modal { background: white; border-radius: 20px; padding: 24px; width: 90%; max-width: 340px; text-align: center; }
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--dark); color: white; padding: 12px 24px; border-radius: 30px; z-index: 9999; transition: transform 0.3s; }
         #toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* AUTH SCREEN */
+        #auth-screen {
+            position: fixed; inset: 0;
+            background: #1a1a2e;
+            background-image: radial-gradient(circle at 20% 20%, rgba(192,57,43,0.2) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 80%, rgba(39,174,96,0.08) 0%, transparent 50%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; gap: 0; padding: 20px;
+        }
+        .auth-emoji {
+            font-size: 64px; margin-bottom: 18px;
+            animation: auth-pulse 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 24px rgba(192,57,43,0.5));
+        }
+        @keyframes auth-pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 24px rgba(192,57,43,0.5)); }
+            50% { transform: scale(1.06); filter: drop-shadow(0 0 40px rgba(192,57,43,0.8)); }
+        }
+        .auth-title {
+            font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700;
+            color: #fff; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px;
+        }
+        .auth-title span { color: var(--red-light); }
+        .auth-sub {
+            font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.3em;
+            text-transform: uppercase; margin-bottom: 40px;
+        }
+        #auth-pin {
+            width: 260px; background: rgba(255,255,255,0.07);
+            border: 1.5px solid rgba(255,255,255,0.12);
+            color: white; text-align: center;
+            font-family: 'Oswald', sans-serif; font-size: 36px;
+            letter-spacing: 0.4em; padding: 18px;
+            border-radius: 18px; outline: none; transition: all 0.2s;
+            margin-bottom: 14px;
+        }
+        #auth-pin:focus { border-color: var(--red-light); box-shadow: 0 0 0 3px rgba(231,76,60,0.2); }
+        .auth-btn {
+            width: 260px; background: var(--red); color: white;
+            font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            padding: 16px; border-radius: 18px; border: none; cursor: pointer;
+            box-shadow: 0 8px 24px rgba(192,57,43,0.4); transition: all 0.15s;
+        }
+        .auth-btn:active { transform: scale(0.97); }
+        #auth-error {
+            color: #ff6b6b; font-size: 12px; margin-top: 10px;
+            opacity: 0; transition: opacity 0.2s; height: 18px;
+        }
+        #auth-error.show { opacity: 1; }
     </style>
 </head>
 <body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+    <div class="auth-emoji">🥩</div>
+    <div class="auth-title">MEAT <span>PRO</span></div>
+    <div class="auth-sub">Система обліку м'яса</div>
+    <input type="password" id="auth-pin" inputmode="numeric" pattern="[0-9]*"
+           autocomplete="one-time-code" autofocus placeholder="• • • •">
+    <button class="auth-btn" onclick="checkAuth()">Увійти</button>
+    <div id="auth-error">Невірний PIN. Спробуйте ще раз.</div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-content" style="display:none;">
 
 <div class="header">
     <h1>MEAT <span>PRO</span> 🥩</h1>
@@ -310,6 +375,23 @@ window.confirmDelete = () => {
 window.quickDelete = (id) => { pendingQuickDeleteId = id; document.getElementById('confirmModal').classList.add('open'); };
 window.closeConfirmModal = () => { document.getElementById('confirmModal').classList.remove('open'); renderCards(cachedData); };
 window.doQuickDelete = () => { firebase.database().ref('meat_batches/' + pendingQuickDeleteId).remove(); closeConfirmModal(); };
+
+// AUTH
+const PASS_ENTRY = "2024";
+function checkAuth() {
+    const pin = document.getElementById('auth-pin').value.trim();
+    const errEl = document.getElementById('auth-error');
+    if (pin === PASS_ENTRY) {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('app-content').style.display = 'block';
+    } else {
+        errEl.classList.add('show');
+        document.getElementById('auth-pin').value = '';
+        setTimeout(() => errEl.classList.remove('show'), 2500);
+    }
+}
+document.getElementById('auth-pin').addEventListener('keypress', e => { if (e.key === 'Enter') checkAuth(); });
 </script>
+</div><!-- /app-content -->
 </body>
 </html>
