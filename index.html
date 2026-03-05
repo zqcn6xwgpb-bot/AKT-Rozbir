@@ -15,7 +15,7 @@
             --gray: #f0f2f5; --border: #e0e0e0;
             --text: #2c2c2c; --text-muted: #888; --radius: 16px;
         }
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; touch-action: manipulation; }
         body {
             font-family: 'Source Sans 3', sans-serif;
             background: #1a1a2e;
@@ -58,7 +58,6 @@
         label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 12px; margin-bottom: 2px; }
         input, select { width: 100%; height: 44px; border-radius: 10px; border: 1.5px solid var(--border); padding: 0 12px; font-size: 15px; background: var(--gray); margin-top: 5px; }
         
-        /* Стилізація календаря */
         input[type="date"] { font-family: 'Source Sans 3', sans-serif; color: var(--text); cursor: pointer; }
 
         .balance-box { padding: 12px; border-radius: 12px; text-align: center; margin: 14px 0; font-family: 'Oswald', sans-serif; font-size: 18px; border: 2px dashed; }
@@ -78,76 +77,75 @@
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--dark); color: white; padding: 12px 24px; border-radius: 30px; z-index: 9999; transition: transform 0.3s; }
         #toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* AUTH SCREEN */
+        /* AUTH SCREEN UPDATED */
         #auth-screen {
             position: fixed; inset: 0;
             background: #1a1a2e;
-            background-image: radial-gradient(circle at 20% 20%, rgba(192,57,43,0.2) 0%, transparent 50%),
-                              radial-gradient(circle at 80% 80%, rgba(39,174,96,0.08) 0%, transparent 50%);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 9999; gap: 0; padding: 20px;
+            z-index: 9999; padding: 20px;
         }
-        .auth-emoji {
-            font-size: 64px; margin-bottom: 18px;
-            animation: auth-pulse 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 24px rgba(192,57,43,0.5));
+        .auth-emoji { font-size: 48px; margin-bottom: 10px; }
+        .auth-title { font-family: 'Oswald', sans-serif; font-size: 24px; color: #fff; margin-bottom: 20px; }
+        .pin-display {
+            display: flex; gap: 15px; margin-bottom: 30px;
         }
-        @keyframes auth-pulse {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 24px rgba(192,57,43,0.5)); }
-            50% { transform: scale(1.06); filter: drop-shadow(0 0 40px rgba(192,57,43,0.8)); }
+        .pin-dot {
+            width: 18px; height: 18px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3); transition: 0.2s;
         }
-        .auth-title {
-            font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700;
-            color: #fff; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px;
+        .pin-dot.active { background: var(--red-light); border-color: var(--red-light); box-shadow: 0 0 15px var(--red-light); }
+        
+        .numpad {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+            width: 100%; max-width: 280px;
         }
-        .auth-title span { color: var(--red-light); }
-        .auth-sub {
-            font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.3em;
-            text-transform: uppercase; margin-bottom: 40px;
+        .num-btn {
+            aspect-ratio: 1; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); color: white;
+            font-family: 'Oswald', sans-serif; font-size: 24px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.1s;
         }
-        #auth-pin {
-            width: 260px; background: rgba(255,255,255,0.07);
-            border: 1.5px solid rgba(255,255,255,0.12);
-            color: white; text-align: center;
-            font-family: 'Oswald', sans-serif; font-size: 36px;
-            letter-spacing: 0.4em; padding: 18px;
-            border-radius: 18px; outline: none; transition: all 0.2s;
-            margin-bottom: 14px;
-        }
-        #auth-pin:focus { border-color: var(--red-light); box-shadow: 0 0 0 3px rgba(231,76,60,0.2); }
-        .auth-btn {
-            width: 260px; background: var(--red); color: white;
-            font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 14px;
-            letter-spacing: 0.15em; text-transform: uppercase;
-            padding: 16px; border-radius: 18px; border: none; cursor: pointer;
-            box-shadow: 0 8px 24px rgba(192,57,43,0.4); transition: all 0.15s;
-        }
-        .auth-btn:active { transform: scale(0.97); }
-        #auth-error {
-            color: #ff6b6b; font-size: 12px; margin-top: 10px;
-            opacity: 0; transition: opacity 0.2s; height: 18px;
-        }
+        .num-btn:active { background: var(--red); transform: scale(0.9); }
+        #auth-error { color: #ff6b6b; font-size: 14px; margin-top: 20px; min-height: 20px; opacity: 0; }
         #auth-error.show { opacity: 1; }
     </style>
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
 <div id="auth-screen">
     <div class="auth-emoji">🥩</div>
     <div class="auth-title">MEAT <span>PRO</span></div>
-    <div class="auth-sub">Система обліку м'яса</div>
-    <input type="password" id="auth-pin" inputmode="numeric" pattern="[0-9]*"
-           autocomplete="one-time-code" autofocus placeholder="• • • •">
-    <button class="auth-btn" onclick="checkAuth()">Увійти</button>
-    <div id="auth-error">Невірний PIN. Спробуйте ще раз.</div>
+    
+    <div class="pin-display" id="pin-display">
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+    </div>
+
+    <div class="numpad">
+        <div class="num-btn" onclick="pressNum('1')">1</div>
+        <div class="num-btn" onclick="pressNum('2')">2</div>
+        <div class="num-btn" onclick="pressNum('3')">3</div>
+        <div class="num-btn" onclick="pressNum('4')">4</div>
+        <div class="num-btn" onclick="pressNum('5')">5</div>
+        <div class="num-btn" onclick="pressNum('6')">6</div>
+        <div class="num-btn" onclick="pressNum('7')">7</div>
+        <div class="num-btn" onclick="pressNum('8')">8</div>
+        <div class="num-btn" onclick="pressNum('9')">9</div>
+        <div></div>
+        <div class="num-btn" onclick="pressNum('0')">0</div>
+        <div class="num-btn" onclick="pressNum('back')">←</div>
+    </div>
+    
+    <div id="auth-error">Невірний PIN!</div>
 </div>
 
-<!-- MAIN APP -->
 <div id="app-content" style="display:none;">
 
 <div class="header">
-    <h1>MEAT <span>PRO</span> 🥩</h1>
+    <h1>MEAT <span>TSB</span> 🥩</h1>
     <div id="status">Підключення...</div>
    <div class="type-selector">
     <button class="btn-type-add" onclick="addNewBatch('meat')">+ М'ЯСО</button>
@@ -165,7 +163,7 @@
     <div class="modal">
         <h3>🔐 ВИДАЛЕННЯ</h3>
         <p>Введіть пароль адміністратора</p>
-        <input type="password" id="modalPassInput" maxlength="10" placeholder="••••">
+        <input type="password" id="modalPassInput" inputmode="numeric" maxlength="10" placeholder="••••">
         <div style="display:flex; gap:10px; margin-top:15px;">
             <button onclick="closeModal()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd;">СКАСУВАТИ</button>
             <button onclick="confirmDelete()" style="flex:1; padding:10px; border-radius:10px; background:var(--red); color:white; border:none;">ВИДАЛИТИ</button>
@@ -184,18 +182,17 @@
 </div>
 
 <script>
-// ВСТАВТЕ ВАШІ ДАНІ ТУТ
 const firebaseConfig = {
-        apiKey: "AIzaSyC8iJyz9URNWxqHoWl6fTAu89caaZK9l-U",
-        authDomain: "meatapp-1.firebaseapp.com",
-        databaseURL: "https://meatapp-1-default-rtdb.firebaseio.com",
-        projectId: "meatapp-1",
-        storageBucket: "meatapp-1.firebasestorage.app",
-        messagingSenderId: "909786568400",
-        appId: "1:909786568400:web:2a89c6b6eb5d17ff2930d5"
-    };
+    apiKey: "AIzaSyC8iJyz9URNWxqHoWl6fTAu89caaZK9l-U",
+    authDomain: "meatapp-1.firebaseapp.com",
+    databaseURL: "https://meatapp-1-default-rtdb.firebaseio.com",
+    projectId: "meatapp-1",
+    storageBucket: "meatapp-1.firebasestorage.app",
+    messagingSenderId: "909786568400",
+    appId: "1:909786568400:web:2a89c6b6eb5d17ff2930d5"
+};
 
-    const TG_TOKEN = "7906609865:AAGxiiMSSnJcShk5SoxE7eVItyqDcWvyE38";
+const TG_TOKEN = "7906609865:AAGxiiMSSnJcShk5SoxE7eVItyqDcWvyE38";
 const TG_CHAT_ID = "-1002336484919";
 const TG_THREAD_ID = "4476";
 const _AP = atob("MzE5Ng=="); // 3196
@@ -217,7 +214,6 @@ function showToast(msg) {
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// Конфігурація типів
 const TYPE_CONFIG = {
     meat: { label: "М'ясо", fields: [{k:'pf', l:'🔪 ПФ'}, {k:'mince', l:'🍔 Фарш'}, {k:'waste', l:'🗑 Відхід'}], hasBalance: true },
     lamb: { label: "Баранина", fields: [{k:'fillet', l:'🥩 Розбір'}, {k:'waste', l:'🗑 Кістки та жир'}], hasBalance: true },
@@ -226,22 +222,14 @@ const TYPE_CONFIG = {
     mackerel: { label: "Скумбрія", fields: [{k:'count', l:'🔢 К-сть (шт)'}], hasBalance: false }
 };
 
-// Допоміжна функція для дати у форматі YYYY-MM-DD
-function getTodayISO() {
-    const d = new Date();
-    return d.toISOString().split('T')[0];
-}
-
-// Форматування дати для Telegram (DD.MM.YYYY)
+function getTodayISO() { return new Date().toISOString().split('T')[0]; }
 function formatToUA(isoDate) {
     if (!isoDate) return "—";
     const [y, m, d] = isoDate.split('-');
     return `${d}.${m}.${y}`;
 }
 
-if (firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
-    setStatus("⚠️ Налаштуйте Firebase", false);
-} else {
+if (!firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -253,10 +241,7 @@ if (firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
 
     window.addNewBatch = (type = 'meat') => {
         const id = Date.now();
-        const initialData = {
-            id, type, date: getTodayISO(),
-            name: "", weight_in: 0, sent: false
-        };
+        const initialData = { id, type, date: getTodayISO(), name: "", weight_in: 0, sent: false };
         TYPE_CONFIG[type].fields.forEach(f => initialData[f.k] = 0);
         db.ref('meat_batches/' + id).set(initialData).then(() => showToast(`Додано: ${TYPE_CONFIG[type].label}`));
     };
@@ -279,29 +264,19 @@ if (firebaseConfig.apiKey.includes("ВСТАВТЕ")) {
         const item = cachedData[id];
         const config = TYPE_CONFIG[item.type || 'meat'];
         btn.disabled = true;
-        
-        let text = `📦 Акт розбору (${config.label}): ${item.name || '—'}\n📅 Дата приходу: ${formatToUA(item.date)}\n`;
+        let text = `📦 Акт розбору (${config.label}): ${item.name || '—'}\n📅 Дата: ${formatToUA(item.date)}\n`;
         if (item.weight_in > 0) text += `📥 Прихід: ${item.weight_in} кг\n`;
-        
-        config.fields.forEach(f => {
-            text += `${f.l}: ${item[f.k] || 0}\n`;
-        });
-        
+        config.fields.forEach(f => { text += `${f.l}: ${item[f.k] || 0}\n`; });
         if (config.hasBalance) {
             const sumUsed = config.fields.reduce((acc, f) => acc + (item[f.k] || 0), 0);
-            const bal = Math.round((item.weight_in - sumUsed) * 1000) / 1000;
-            text += `✅ Баланс: ${bal} кг`;
+            text += `✅ Баланс: ${Math.round((item.weight_in - sumUsed) * 1000) / 1000} кг`;
         }
-
         const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: TG_CHAT_ID, text, message_thread_id: TG_THREAD_ID })
         });
-        if (res.ok) {
-            db.ref('meat_batches/' + id).update({ sent: true });
-            showToast("Відправлено!");
-        } else { btn.disabled = false; showToast("Помилка TG"); }
+        if (res.ok) { db.ref('meat_batches/' + id).update({ sent: true }); showToast("Відправлено!"); }
+        else { btn.disabled = false; showToast("Помилка TG"); }
     };
 }
 
@@ -309,14 +284,12 @@ function renderCards(data) {
     if (document.querySelector('.modal-overlay.open')) return;
     const list = document.getElementById('cards-list');
     const items = Object.values(data).sort((a, b) => b.id - a.id);
-    
     list.innerHTML = items.map(item => {
         const type = item.type || 'meat';
         const config = TYPE_CONFIG[type];
         const sumUsed = config.fields.reduce((acc, f) => acc + (item[f.k] || 0), 0);
         const balance = Math.round((item.weight_in - sumUsed) * 1000) / 1000;
         const isOk = item.weight_in > 0 && balance === 0;
-
         return `
             <div class="card ${item.sent ? 'is-sent' : (config.hasBalance && isOk ? 'is-ok' : '')}">
                 <div class="card-type-label">${config.label}</div>
@@ -332,29 +305,22 @@ function renderCards(data) {
                 <div class="full-content">
                     <label>Дата приходу</label>
                     <input type="date" value="${item.date || getTodayISO()}" onchange="updateField('${item.id}','date',this.value)">
-
                     <label>Назва / Коментар</label>
                     <input type="text" value="${item.name}" placeholder="Напр: Стегно куряче" onchange="updateField('${item.id}','name',this.value)">
-                    
                     ${type !== 'mackerel' && type !== 'ribs' ? `
                         <label>Прихід (кг)</label>
-                        <input type="number" step="0.001" value="${item.weight_in}" onchange="updateField('${item.id}','weight_in',this.value)">
+                        <input type="number" inputmode="decimal" step="0.001" value="${item.weight_in}" onchange="updateField('${item.id}','weight_in',this.value)">
                     ` : ''}
-
-                    ${config.hasBalance ? `
-                        <div class="balance-box ${isOk ? 'balance-ok' : 'balance-err'}">ЗАЛИШОК: ${balance.toFixed(3)} кг</div>
-                    ` : ''}
-
+                    ${config.hasBalance ? `<div class="balance-box ${isOk ? 'balance-ok' : 'balance-err'}">ЗАЛИШОК: ${balance.toFixed(3)} кг</div>` : ''}
                     ${config.fields.map(f => `
                         <div class="sum-container">
                             <div style="font-size:14px;">${f.l}: <b>${item[f.k] || 0}</b></div>
                             <div class="add-row">
-                                <input type="number" step="0.001" id="in-${f.k}-${item.id}" placeholder="+ кг/шт" onkeydown="if(event.key==='Enter') addWeight('${item.id}','${f.k}')">
+                                <input type="number" inputmode="decimal" step="0.001" id="in-${f.k}-${item.id}" placeholder="+ кг/шт" onkeydown="if(event.key==='Enter') addWeight('${item.id}','${f.k}')">
                                 <button class="btn-plus" onclick="addWeight('${item.id}','${f.k}')">+</button>
                             </div>
                         </div>
                     `).join('')}
-
                     <div class="card-actions">
                         <button class="btn-send" onclick="sendToTG('${item.id}', this)">ВІДПРАВИТИ</button>
                         <button class="btn-delete-full" onclick="quickDelete('${item.id}')">🗑</button>
@@ -376,22 +342,46 @@ window.quickDelete = (id) => { pendingQuickDeleteId = id; document.getElementByI
 window.closeConfirmModal = () => { document.getElementById('confirmModal').classList.remove('open'); renderCards(cachedData); };
 window.doQuickDelete = () => { firebase.database().ref('meat_batches/' + pendingQuickDeleteId).remove(); closeConfirmModal(); };
 
-// AUTH
+// UPDATED AUTH LOGIC
 const PASS_ENTRY = "2024";
+let currentPin = "";
+
+function pressNum(num) {
+    const errorEl = document.getElementById('auth-error');
+    errorEl.classList.remove('show');
+
+    if (num === 'back') {
+        currentPin = currentPin.slice(0, -1);
+    } else if (currentPin.length < 4) {
+        currentPin += num;
+    }
+    
+    updatePinDisplay();
+
+    if (currentPin.length === 4) {
+        setTimeout(checkAuth, 100);
+    }
+}
+
+function updatePinDisplay() {
+    const dots = document.querySelectorAll('.pin-dot');
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index < currentPin.length);
+    });
+}
+
 function checkAuth() {
-    const pin = document.getElementById('auth-pin').value.trim();
-    const errEl = document.getElementById('auth-error');
-    if (pin === PASS_ENTRY) {
+    if (currentPin === PASS_ENTRY) {
         document.getElementById('auth-screen').style.display = 'none';
         document.getElementById('app-content').style.display = 'block';
     } else {
-        errEl.classList.add('show');
-        document.getElementById('auth-pin').value = '';
-        setTimeout(() => errEl.classList.remove('show'), 2500);
+        const errorEl = document.getElementById('auth-error');
+        errorEl.classList.add('show');
+        currentPin = "";
+        setTimeout(updatePinDisplay, 500);
     }
 }
-document.getElementById('auth-pin').addEventListener('keypress', e => { if (e.key === 'Enter') checkAuth(); });
 </script>
-</div><!-- /app-content -->
+</div>
 </body>
 </html>
